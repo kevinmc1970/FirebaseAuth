@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1088286980048",
+    "firebase_url": "https://electricshare-45c4f.firebaseio.com",
+    "project_id": "electricshare-45c4f",
+    "storage_bucket": "electricshare-45c4f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1088286980048:android:d842af33038fad5c",
+        "android_client_info": {
+          "package_name": "info.androidhive.firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1088286980048-5bki2ja5mssbku6dn4dnf0nr73c08uua.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0PJjg8OYxK9iIiSHB9ozbAemflUkLezs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
