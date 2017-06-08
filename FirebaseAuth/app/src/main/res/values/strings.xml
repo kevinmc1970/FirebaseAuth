@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Firebase Auth</string>
+    <string name="app_name">Electric Car Share</string>
     <string name="action_sign_in_short">Register</string>
     <string name="email">Email</string>
     <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
@@ -13,6 +13,7 @@
     <string name="title_activity_login">Sign in</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
+    <string name="hint_registration">Car Registration</string>
     <string name="hint_name">Fullname</string>
     <string name="btn_login">LOGIN</string>
     <string name="btn_link_to_register">Not a member? Get registered in Firebase now!</string>
@@ -28,4 +29,11 @@
     <string name="btn_sign_out">Sign Out</string>
     <string name="lbl_forgot_password">Forgot password?</string>
     <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
+    <string name="manage_account">Manage Account</string>
+    <string name="company_prompt">Company</string>
+
+    <string-array name="company_arrays">
+        <item>MBNA Chester</item>
+    </string-array>
+
 </resources>
