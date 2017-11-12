@@ -33,6 +33,19 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:orientation="vertical">
 
+        <GridView
+            android:id="@+id/activity_main_chargers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnWidth="90dp"
+            android:numColumns="2"
+            android:layout_gravity="center"
+            android:background="#8c898f"
+            android:verticalSpacing="2dp"
+            android:horizontalSpacing="2dp"
+            android:orientation="horizontal"
+            tools:context=".GridXMLActivity" />
+
         <Button
             android:id="@+id/manage_account_button"
             style="?android:textAppearanceSmall"

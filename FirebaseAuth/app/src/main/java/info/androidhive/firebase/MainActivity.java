@@ -9,7 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -17,26 +20,32 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import adapter.StationsGridAdapter;
+import info.androidhive.model.Station;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button signOut, manageAccount;
-
     private FirebaseAuth.AuthStateListener authListener;
     private FirebaseAuth auth;
-//    private DatabaseReference mDatabase;
     private DatabaseReference mPostReference;
     private SharedPreferences sharedPref;
-    private String signOutString;
+    private GridView gv;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         sharedPref = getSharedPreferences("ElectricCarShare", Context.MODE_PRIVATE);
-        // or try setting value from sharedPrefs
-        signOutString = sharedPref.getString("company", "sign out");
+
+        gv = (GridView) findViewById(R.id.activity_main_chargers);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(getString(R.string.app_name));
@@ -61,12 +70,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-
-
-
-        //mDatabase = FirebaseDatabase.getInstance().getReference();
-        mPostReference = FirebaseDatabase.getInstance().getReference()
-                .child("company").child("chargers");
+        // Must be logged in at Firebase so continue
+        // Show all the chargers for the user's company
+        mPostReference = FirebaseDatabase.getInstance().getReference("companies/"
+                + sharedPref.getString("company", "not found"));
+        // TODO if not found then show select company activity
+        Query chargersQuery = mPostReference.child("stations");
+        // TEMP to reset the sharedPref to match the json company name if manually changed in FB
+//        SharedPreferences.Editor editor = sharedPref.edit();
+//        editor.putString("company", "mbna");
+//        editor.commit();
 
         signOut = (Button) findViewById(R.id.sign_out);
         manageAccount = (Button) findViewById(R.id.manage_account_button);
@@ -78,16 +91,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Listen to firebase changes and then set the signout button
-        // to be the same as the car value in the DB
-        ValueEventListener postListener = new ValueEventListener() {
+        // Listen to firebase changes in the stations node
+        ValueEventListener stationsListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                String car = (String)dataSnapshot.getValue();
-                //signOut.setText(car);
-            }
+                // send the list of chargers to the grid layout
+                // noOfStations.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                // Populate a List from Array elements
+                final List<Station> stations = new ArrayList();
+                for (DataSnapshot d: dataSnapshot.getChildren()) {
+                    Station station = d.getValue(Station.class);
+                    stations.add(station);
+                }
 
+                // Create a new ArrayAdapter
+                //final ArrayAdapter<Button> gridViewArrayAdapter = new ArrayAdapter
+                  //      (MainActivity.this, android.R.layout.simple_list_item_1, stations);
+                StationsGridAdapter gridViewArrayAdapter = new StationsGridAdapter(MainActivity.this, stations);
+
+                // Data bind GridView with ArrayAdapter (String Array elements)
+                gv.setAdapter(gridViewArrayAdapter);
+            }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -97,10 +121,18 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        // or try setting value from sharedPrefs
-        signOut.setText(signOutString);
+        // Add a listener for each Button in the grid
+        gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-        mPostReference.addValueEventListener(postListener);
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                Toast.makeText(MainActivity.this, "" + position,
+                        Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        chargersQuery.addValueEventListener(stationsListener);
         signOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
