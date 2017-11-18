@@ -29,6 +29,9 @@ import java.util.List;
 import adapter.StationsGridAdapter;
 import info.androidhive.model.Station;
 
+import static info.androidhive.firebase.SignupActivity.SELECTED_COMPANY;
+import static info.androidhive.firebase.SignupActivity.USER_NAME;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button signOut, manageAccount;
@@ -73,9 +76,9 @@ public class MainActivity extends AppCompatActivity {
         // Must be logged in at Firebase so continue
         // Show all the chargers for the user's company
         mPostReference = FirebaseDatabase.getInstance().getReference("companies/"
-                + sharedPref.getString("company", "not found"));
+                + sharedPref.getString(SELECTED_COMPANY, "not found"));
         // TODO if not found then show select company activity
-        Query chargersQuery = mPostReference.child("stations");
+        final Query chargersQuery = mPostReference.child("stations");
         // TEMP to reset the sharedPref to match the json company name if manually changed in FB
 //        SharedPreferences.Editor editor = sharedPref.edit();
 //        editor.putString("company", "mbna");
@@ -101,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 final List<Station> stations = new ArrayList();
                 for (DataSnapshot d: dataSnapshot.getChildren()) {
                     Station station = d.getValue(Station.class);
+                    station.setId(d.getRef().getKey());
                     stations.add(station);
                 }
 
@@ -126,8 +130,24 @@ public class MainActivity extends AppCompatActivity {
 
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                Toast.makeText(MainActivity.this, "" + position,
+//                Toast.makeText(MainActivity.this, "" + position,
+//                        Toast.LENGTH_SHORT).show();
+                Station selected = (Station)parent.getItemAtPosition(position);
+                if (selected.getAvailable() != 0) {
+                    selected.setAvailable(0);
+                    selected.setUser(null);
+                    selected.setWorking(true);
+                } else
+                {
+                    long dummyTime = 123456789;
+                    selected.setAvailable(dummyTime);
+                    selected.setWorking(true);
+                    selected.setUser(sharedPref.getString(USER_NAME, "not found"));
+                }
+                chargersQuery.getRef().child(selected.getId()).setValue(selected);
+                Toast.makeText(MainActivity.this, "" + selected.getId(),
                         Toast.LENGTH_SHORT).show();
+
 
             }
         });

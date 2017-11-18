@@ -18,15 +18,25 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import info.androidhive.model.User;
 
 public class SignupActivity extends AppCompatActivity {
 
-    private EditText inputEmail, inputPassword, reg;
+    public static final String SELECTED_COMPANY = "company";
+    public static final String USER_NAME = "userName";
+    private EditText inputEmail, inputPassword;
     private Spinner companySpinner;
     private Button btnSignIn, btnSignUp, btnResetPassword;
     private ProgressBar progressBar;
     private FirebaseAuth auth;
     private SharedPreferences sharedPref;
+    private DatabaseReference mPostReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +46,8 @@ public class SignupActivity extends AppCompatActivity {
 
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
+        // Get database ref to users
+        mPostReference = FirebaseDatabase.getInstance().getReference("users");
 
         btnSignIn = (Button) findViewById(R.id.sign_in_button);
         btnSignUp = (Button) findViewById(R.id.sign_up_button);
@@ -44,7 +56,6 @@ public class SignupActivity extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         btnResetPassword = (Button) findViewById(R.id.btn_reset_password);
         companySpinner = (Spinner) findViewById(R.id.companySpinner);
-        reg = (EditText) findViewById(R.id.registration);
 
         btnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,9 +75,9 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String email = inputEmail.getText().toString().trim();
+                final String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
-                final String registration = reg.getText().toString().trim();
+
                 final String company = companySpinner.getSelectedItem().toString().trim();
 
                 if (TextUtils.isEmpty(email)) {
@@ -81,11 +92,6 @@ public class SignupActivity extends AppCompatActivity {
 
                 if (TextUtils.isEmpty(company)) {
                     Toast.makeText(getApplicationContext(), "Select company!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (TextUtils.isEmpty(registration)) {
-                    Toast.makeText(getApplicationContext(), "Enter registration!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -111,9 +117,16 @@ public class SignupActivity extends AppCompatActivity {
                                 } else {
                                     // now set the company and reg in sharedPrefs so dont hit DB too much
                                     SharedPreferences.Editor editor = sharedPref.edit();
-                                    editor.putString("company", company);
-                                    editor.putString("registration", registration);
+                                    editor.putString(SELECTED_COMPANY, company);
+                                    editor.putString(USER_NAME, email);
                                     editor.commit();
+                                    // and create user in database
+                                    User user = new User();
+                                    Map<String, Boolean> companies = new HashMap<String, Boolean>();
+                                    companies.put(company, true);
+                                    user.setCompanies(companies);
+                                    user.setName(email);
+                                    mPostReference.push().setValue(user);
                                     startActivity(new Intent(SignupActivity.this, MainActivity.class));
                                     finish();
                                 }

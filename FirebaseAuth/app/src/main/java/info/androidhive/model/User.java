@@ -1,10 +1,14 @@
 package info.androidhive.model;
 
-import java.util.List;
+import com.google.firebase.database.Exclude;
+
+import java.util.Map;
 
 public class User {
+
+    String id;
     String name;
-    List<Company> companyList;
+    Map<String, Boolean> companies;
 
     public String getName() {
         return name;
@@ -14,11 +18,16 @@ public class User {
         this.name = name;
     }
 
-    public List<Company> getCompanyList() {
-        return companyList;
+    public Map<String, Boolean> getCompanies() {
+        return companies;
     }
 
-    public void setCompanyList(List<Company> companyList) {
-        this.companyList = companyList;
+    public void setCompanies(Map<String, Boolean> companies) {
+        this.companies = companies;
     }
+
+    @Exclude
+    public String getId() {        return id;    }
+
+    public void setId(String id) {        this.id = id;    }
 }

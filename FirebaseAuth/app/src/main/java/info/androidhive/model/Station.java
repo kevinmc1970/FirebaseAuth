@@ -1,7 +1,11 @@
 package info.androidhive.model;
 
+import com.google.firebase.database.Exclude;
+
 public class Station {
 
+    @Exclude
+    String id;
     String name;
     Boolean working;
     long available;
@@ -38,4 +42,8 @@ public class Station {
     public void setUser(String userName) {
         this.userName = userName;
     }
+
+    public String getId() {        return id;    }
+
+    public void setId(String id) {        this.id = id;    }
 }
