@@ -36,4 +36,9 @@
         <item>MBNA Chester</item>
     </string-array>
 
+    <string-array name="drawer_menu_items">
+        <item>"Manage Account"</item>
+        <item>"Sign Out"</item>
+    </string-array>
+
 </resources>

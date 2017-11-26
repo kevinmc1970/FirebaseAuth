@@ -8,7 +8,7 @@ public class Station {
     String id;
     String name;
     Boolean working;
-    long available;
+    String available;
     String userName;
 
     public String getName() {
@@ -27,11 +27,11 @@ public class Station {
         this.working = working;
     }
 
-    public long getAvailable() {
+    public String getAvailable() {
         return available;
     }
 
-    public void setAvailable(long available) {
+    public void setAvailable(String available) {
         this.available = available;
     }
 

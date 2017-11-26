@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,7 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mPostReference;
     private SharedPreferences sharedPref;
     private GridView gv;
-
+    private TextView available;
+    private int hr;
+    private int min;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,25 +128,22 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        // Add a listener for each Button in the grid
+        // Add a listener for each station in the grid
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-//                Toast.makeText(MainActivity.this, "" + position,
-//                        Toast.LENGTH_SHORT).show();
                 Station selected = (Station)parent.getItemAtPosition(position);
-                if (selected.getAvailable() != 0) {
-                    selected.setAvailable(0);
+                if (null != selected.getAvailable()) {
+                    selected.setAvailable(null);
                     selected.setUser(null);
                     selected.setWorking(true);
                 } else
                 {
-                    long dummyTime = 123456789;
-                    selected.setAvailable(dummyTime);
                     selected.setWorking(true);
                     selected.setUser(sharedPref.getString(USER_NAME, "not found"));
                 }
+
                 chargersQuery.getRef().child(selected.getId()).setValue(selected);
                 Toast.makeText(MainActivity.this, "" + selected.getId(),
                         Toast.LENGTH_SHORT).show();
@@ -161,6 +161,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+
+
+
 
     //sign out method
     public void signOut() {
